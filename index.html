@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Countdown Screen</title>
+
+<title>Countdown</title>
 
 <style>
 
@@ -13,68 +14,98 @@
     box-sizing:border-box;
 }
 
+html,body{
+    width:100%;
+    height:100%;
+}
+
 body{
-    background:#111;
+
     display:flex;
     justify-content:center;
     align-items:center;
-    height:100vh;
+
+    background:#101010;
+    overflow:hidden;
+
     font-family:Arial,Helvetica,sans-serif;
 }
 
+/* Main Display */
+
 .screen{
-    width:900px;
-    height:520px;
+
+    position:relative;
+
+    width:min(900px,95vw);
+    aspect-ratio:900/520;
+
     background:#050505;
 
     border:8px solid #181818;
-    border-radius:18px;
+    border-radius:20px;
 
-    position:relative;
     overflow:hidden;
 
     box-shadow:
-        0 0 30px rgba(255,0,0,.25),
+        0 0 40px rgba(255,0,0,.25),
         inset 0 0 100px rgba(255,0,0,.05);
+
 }
 
 /* Scanlines */
 
 .screen::before{
+
     content:"";
+
     position:absolute;
     inset:0;
+
     background:
         repeating-linear-gradient(
             transparent 0px,
             transparent 3px,
             rgba(255,255,255,.02) 4px
         );
+
     pointer-events:none;
+
 }
 
-/* Flicker */
+/* Random flicker */
 
 .screen::after{
+
     content:"";
+
     position:absolute;
     inset:0;
+
     background:rgba(255,0,0,.02);
-    animation:screenFlicker .15s infinite alternate;
+
+    animation:flicker .15s infinite alternate;
+
     pointer-events:none;
+
 }
 
-@keyframes screenFlicker{
-    from{opacity:.15;}
-    to{opacity:.03;}
+@keyframes flicker{
+
+from{opacity:.04;}
+to{opacity:.15;}
+
 }
 
-/* Hazard Borders */
+/* Warning stripes */
 
 .border{
+
     position:absolute;
+
     left:20px;
     right:20px;
+
     height:18px;
 
     background:
@@ -82,149 +113,160 @@ body{
             -45deg,
             #b00000 0px,
             #b00000 12px,
-            #300000 12px,
-            #300000 24px
+            #2c0000 12px,
+            #2c0000 24px
         );
+
 }
 
 .top{top:20px;}
 .bottom{bottom:20px;}
 
-/* Background Symbol */
+/* Symbol */
 
 .emblem{
 
     position:absolute;
 
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
     width:260px;
     height:260px;
 
-    left:50%;
-    top:50%;
-
-    transform:translate(-50%,-50%);
-
-    border:5px solid rgba(255,0,0,.12);
     border-radius:50%;
+
+    border:5px solid rgba(255,0,0,.10);
+
 }
 
-.emblem::before,
-.emblem::after{
+.emblem:before,
+.emblem:after{
 
-    content:"";
+content:"";
 
-    position:absolute;
+position:absolute;
 
-    left:50%;
-    top:50%;
+left:50%;
+top:50%;
 
-    width:4px;
-    height:250px;
+width:4px;
+height:240px;
 
-    background:rgba(255,0,0,.12);
+background:rgba(255,0,0,.10);
 
-    transform:translate(-50%,-50%);
+transform:translate(-50%,-50%);
+
 }
 
-.emblem::after{
-    transform:translate(-50%,-50%) rotate(90deg);
+.emblem:after{
+
+transform:translate(-50%,-50%) rotate(90deg);
+
 }
 
 .star{
 
-    position:absolute;
+position:absolute;
 
-    width:170px;
-    height:170px;
+left:50%;
+top:50%;
 
-    left:50%;
-    top:50%;
+transform:translate(-50%,-50%) rotate(45deg);
 
-    transform:translate(-50%,-50%) rotate(45deg);
+width:170px;
+height:170px;
 
-    border:4px solid rgba(255,0,0,.12);
+border:4px solid rgba(255,0,0,.10);
+
 }
 
-/* Text */
+/* Center Content */
 
 .content{
 
-    position:absolute;
+position:absolute;
 
-    left:50%;
-    top:48%;
+inset:0;
 
-    transform:translate(-50%,-50%);
+display:flex;
 
-    text-align:center;
+flex-direction:column;
 
-    width:100%;
+justify-content:center;
+
+align-items:center;
+
+padding:30px;
+
+text-align:center;
+
 }
+
+/* Timer */
 
 #timer{
 
-    color:#ff5555;
+font-family:Consolas,monospace;
 
-    font-size:56px;
+font-size:clamp(24px,6vw,60px);
 
-    font-family:Consolas,"Courier New",monospace;
+color:#ff5555;
 
-    letter-spacing:4px;
+letter-spacing:.08em;
 
-    text-shadow:
-        0 0 10px #ff0000,
-        0 0 25px #ff0000,
-        0 0 45px #990000;
+text-shadow:
+0 0 8px red,
+0 0 20px red,
+0 0 45px #990000;
 
-    animation:flicker 2s infinite;
+animation:textFlicker 2s infinite;
+
 }
+
+/* Subtitle */
 
 .subtitle{
 
-    margin-top:18px;
+margin-top:18px;
 
-    font-size:28px;
+font-size:clamp(14px,3vw,28px);
 
-    color:#ff7777;
+color:#ff7b7b;
 
-    text-shadow:0 0 8px red;
-}
-
-.cursor{
-
-    display:inline-block;
-
-    width:12px;
-    height:28px;
-
-    background:white;
-
-    margin-left:8px;
-
-    animation:blink .8s infinite;
-}
-
-@keyframes blink{
-
-    50%{
-        opacity:0;
-    }
+text-shadow:0 0 10px red;
 
 }
 
-@keyframes flicker{
+/* Text flicker */
 
-    0%,18%,22%,100%{
-        opacity:1;
-    }
+@keyframes textFlicker{
 
-    20%{
-        opacity:.55;
-    }
+0%,18%,22%,100%{opacity:1;}
 
-    21%{
-        opacity:.2;
-    }
+20%{opacity:.45;}
+
+21%{opacity:.15;}
+
+}
+
+/* Screen glitch */
+
+.glitch{
+
+animation:glitch .12s;
+
+}
+
+@keyframes glitch{
+
+0%{transform:translateX(0);}
+25%{transform:translateX(-4px);}
+50%{transform:translateX(4px);}
+75%{transform:translateX(-2px);}
+100%{transform:translateX(0);}
 
 }
 
@@ -233,83 +275,93 @@ body{
 </head>
 <body>
 
-<div class="screen">
+<div class="screen" id="screen">
 
-    <div class="border top"></div>
-    <div class="border bottom"></div>
+<div class="border top"></div>
 
-    <div class="emblem">
-        <div class="star"></div>
-    </div>
+<div class="border bottom"></div>
 
-    <div class="content">
+<div class="emblem">
+<div class="star"></div>
+</div>
 
-        <div id="timer">
-            00:00:00:00:000
-        </div>
+<div class="content">
 
-        <div class="subtitle">
-            Pressure Update
-            <span class="cursor"></span>
-        </div>
+<div id="timer">
+00:00:00:00:000
+</div>
 
-    </div>
+<div class="subtitle">
+Connection will be restored shortly.
+</div>
+
+</div>
 
 </div>
 
 <script>
 
-/* ======================================================
-   CHANGE ONLY THIS DATE
+/*======================================================
+ CHANGE ONLY THIS DATE
 
-   new Date(year, month, day, hour, minute, second, ms)
+ new Date(year, month, day, hour, minute, second, ms)
 
-   Months:
-   January = 0
-   February = 1
-   ...
-   December = 11
-====================================================== */
+ Months:
+ January = 0
+ December = 11
+======================================================*/
 
-const TARGET_DATE = new Date(2026, 7, 1, 12, 0, 0, 0);
+const TARGET_DATE = new Date(2026,11,25,12,0,0,0);
 
-/* ====================================================== */
+/*======================================================*/
 
-const timer = document.getElementById("timer");
+const timer=document.getElementById("timer");
+const screen=document.getElementById("screen");
 
-function updateTimer(){
+function update(){
 
-    const now = new Date();
+let diff=TARGET_DATE-new Date();
 
-    let diff = TARGET_DATE - now;
+if(diff<0) diff=0;
 
-    if(diff < 0){
-        diff = 0;
-    }
+const days=Math.floor(diff/86400000);
+diff%=86400000;
 
-    const days = Math.floor(diff / 86400000);
-    diff %= 86400000;
+const hrs=Math.floor(diff/3600000);
+diff%=3600000;
 
-    const hours = Math.floor(diff / 3600000);
-    diff %= 3600000;
+const mins=Math.floor(diff/60000);
+diff%=60000;
 
-    const minutes = Math.floor(diff / 60000);
-    diff %= 60000;
+const secs=Math.floor(diff/1000);
 
-    const seconds = Math.floor(diff / 1000);
+const ms=diff%1000;
 
-    const milliseconds = diff % 1000;
+timer.textContent=
+String(days).padStart(2,"0")+":"+
+String(hrs).padStart(2,"0")+":"+
+String(mins).padStart(2,"0")+":"+
+String(secs).padStart(2,"0")+":"+
+String(ms).padStart(3,"0");
 
-    timer.textContent =
-        String(days).padStart(2,"0") + ":" +
-        String(hours).padStart(2,"0") + ":" +
-        String(minutes).padStart(2,"0") + ":" +
-        String(seconds).padStart(2,"0") + ":" +
-        String(milliseconds).padStart(3,"0");
 }
 
-updateTimer();
-setInterval(updateTimer,10);
+update();
+setInterval(update,10);
+
+/* Random glitch */
+
+setInterval(()=>{
+
+screen.classList.add("glitch");
+
+setTimeout(()=>{
+
+screen.classList.remove("glitch");
+
+},120);
+
+},3000+Math.random()*4000);
 
 </script>
 
