@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Countdown Screen</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#111;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.screen{
+    width:900px;
+    height:520px;
+    background:#050505;
+
+    border:8px solid #181818;
+    border-radius:18px;
+
+    position:relative;
+    overflow:hidden;
+
+    box-shadow:
+        0 0 30px rgba(255,0,0,.25),
+        inset 0 0 100px rgba(255,0,0,.05);
+}
+
+/* Scanlines */
+
+.screen::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        repeating-linear-gradient(
+            transparent 0px,
+            transparent 3px,
+            rgba(255,255,255,.02) 4px
+        );
+    pointer-events:none;
+}
+
+/* Flicker */
+
+.screen::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(255,0,0,.02);
+    animation:screenFlicker .15s infinite alternate;
+    pointer-events:none;
+}
+
+@keyframes screenFlicker{
+    from{opacity:.15;}
+    to{opacity:.03;}
+}
+
+/* Hazard Borders */
+
+.border{
+    position:absolute;
+    left:20px;
+    right:20px;
+    height:18px;
+
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            #b00000 0px,
+            #b00000 12px,
+            #300000 12px,
+            #300000 24px
+        );
+}
+
+.top{top:20px;}
+.bottom{bottom:20px;}
+
+/* Background Symbol */
+
+.emblem{
+
+    position:absolute;
+
+    width:260px;
+    height:260px;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    border:5px solid rgba(255,0,0,.12);
+    border-radius:50%;
+}
+
+.emblem::before,
+.emblem::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    width:4px;
+    height:250px;
+
+    background:rgba(255,0,0,.12);
+
+    transform:translate(-50%,-50%);
+}
+
+.emblem::after{
+    transform:translate(-50%,-50%) rotate(90deg);
+}
+
+.star{
+
+    position:absolute;
+
+    width:170px;
+    height:170px;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%) rotate(45deg);
+
+    border:4px solid rgba(255,0,0,.12);
+}
+
+/* Text */
+
+.content{
+
+    position:absolute;
+
+    left:50%;
+    top:48%;
+
+    transform:translate(-50%,-50%);
+
+    text-align:center;
+
+    width:100%;
+}
+
+#timer{
+
+    color:#ff5555;
+
+    font-size:56px;
+
+    font-family:Consolas,"Courier New",monospace;
+
+    letter-spacing:4px;
+
+    text-shadow:
+        0 0 10px #ff0000,
+        0 0 25px #ff0000,
+        0 0 45px #990000;
+
+    animation:flicker 2s infinite;
+}
+
+.subtitle{
+
+    margin-top:18px;
+
+    font-size:28px;
+
+    color:#ff7777;
+
+    text-shadow:0 0 8px red;
+}
+
+.cursor{
+
+    display:inline-block;
+
+    width:12px;
+    height:28px;
+
+    background:white;
+
+    margin-left:8px;
+
+    animation:blink .8s infinite;
+}
+
+@keyframes blink{
+
+    50%{
+        opacity:0;
+    }
+
+}
+
+@keyframes flicker{
+
+    0%,18%,22%,100%{
+        opacity:1;
+    }
+
+    20%{
+        opacity:.55;
+    }
+
+    21%{
+        opacity:.2;
+    }
+
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="screen">
+
+    <div class="border top"></div>
+    <div class="border bottom"></div>
+
+    <div class="emblem">
+        <div class="star"></div>
+    </div>
+
+    <div class="content">
+
+        <div id="timer">
+            00:00:00:00:000
+        </div>
+
+        <div class="subtitle">
+            Pressure Update
+            <span class="cursor"></span>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* ======================================================
+   CHANGE ONLY THIS DATE
+
+   new Date(year, month, day, hour, minute, second, ms)
+
+   Months:
+   January = 0
+   February = 1
+   ...
+   December = 11
+====================================================== */
+
+const TARGET_DATE = new Date(2026, 7, 1, 12, 0, 0, 0);
+
+/* ====================================================== */
+
+const timer = document.getElementById("timer");
+
+function updateTimer(){
+
+    const now = new Date();
+
+    let diff = TARGET_DATE - now;
+
+    if(diff < 0){
+        diff = 0;
+    }
+
+    const days = Math.floor(diff / 86400000);
+    diff %= 86400000;
+
+    const hours = Math.floor(diff / 3600000);
+    diff %= 3600000;
+
+    const minutes = Math.floor(diff / 60000);
+    diff %= 60000;
+
+    const seconds = Math.floor(diff / 1000);
+
+    const milliseconds = diff % 1000;
+
+    timer.textContent =
+        String(days).padStart(2,"0") + ":" +
+        String(hours).padStart(2,"0") + ":" +
+        String(minutes).padStart(2,"0") + ":" +
+        String(seconds).padStart(2,"0") + ":" +
+        String(milliseconds).padStart(3,"0");
+}
+
+updateTimer();
+setInterval(updateTimer,10);
+
+</script>
+
+</body>
+</html>
